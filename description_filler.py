@@ -15,7 +15,6 @@ class PDFEditor:
         
         # Define self class variables
         self.file_path = None
-        self.excel_path = None
         self.output_path = None
 
         self.file_label = tk.Label(
@@ -35,23 +34,6 @@ class PDFEditor:
         )
         import_button.pack(pady=20)
 
-        self.excel_label = tk.Label(
-            window,
-            text = "No Title Sheet Loaded",
-            font = ("Arial, 10"),
-            fg = "gray"
-        )
-        self.excel_label.pack(pady=10)
-
-        load_excel_button = tk.Button(
-            window,
-            text = "Load Title Sheet",
-            command = self.excel_import,
-            width = 20,
-            height = 2,
-        )
-        load_excel_button.pack(pady = 20)
-
         run_button = tk.Button(
             window,
             text = "Run",
@@ -61,6 +43,37 @@ class PDFEditor:
         )
         run_button.pack(pady=2)
 
+    def load_descriptions(self):
+
+        titles = []
+
+        doc = pdf.open(self.file_path)
+        title_page = doc[0]
+
+        tables = title_page.find_tables()
+
+        if tables:
+            target_table = None
+            
+            for table in tables:
+                data = table.extract()
+                if data and len(data[0]) >= 2:
+                    if 'TITLE' in data[0]:
+                        target_table = table
+                        break
+            if target_table:
+                title_data = target_table.extract()
+            
+            for row in title_data[1:]:
+                if len(row) >=2:
+                    title = row[1].strip()
+                    if title:
+                        titles.append(title)
+
+        doc.close()
+        return titles
+
+        
     def import_file(self):
         self.file_path = filedialog.askopenfilename(
             title = "Select PDF File",
@@ -73,31 +86,9 @@ class PDFEditor:
         else:
             self.file_label.config(text = "No file loaded", fg = "gray")
 
-    def excel_import(self):
-        self.excel_path = filedialog.askopenfilename(
-            title = "Select Excel File",
-            filetypes = [("Excel files", "*.xlsx")]
-        )
-        if self.excel_path:
-            filename = os.path.basename(self.excel_path)
-            self.excel_label.config(text = f"Loaded: {filename}", fg = "green")
-
-            workbook = openpyxl.load_workbook(self.excel_path)
-
-            sheet = workbook.active
-
-            data = []
-            for row in sheet.iter_rows(min_col = 1, max_col = 1, values_only = True):
-                if row[0] is not None:
-                    data.append(row[0])
-            
-            self.names = data
-
-            return data
-        else:
-            self.excel_label.config(text = "No file loaded", fg = "gray")
-
     def process_pdf(self):
+
+        titles = self.load_descriptions()
         self.output_path = filedialog.askdirectory(
             title = "Select Output Path"
         )
@@ -107,7 +98,7 @@ class PDFEditor:
         num = 0
 
         for page in doc:
-            text = self.names[num]
+            text = titles[num]
             page.insert_text(
                 (1000, 730),
                 text,
