@@ -45,7 +45,7 @@ class PDFEditor:
 
     def load_descriptions(self):
 
-        titles = []
+        raw_titles = []
 
         doc = pdf.open(self.file_path)
         title_page = doc[0]
@@ -68,12 +68,20 @@ class PDFEditor:
                 if len(row) >=2:
                     title = row[1].strip()
                     if title:
-                        titles.append(title)
-
+                        raw_titles.append(title)
         doc.close()
+
+        if len(raw_titles) > 1:
+            common_prefix = os.path.commonprefix(raw_titles)
+            if len(common_prefix.split()) >= 3:
+                titles = [t[len(common_prefix):].strip() for t in raw_titles]
+            else:
+                titles = raw_titles
+        else:
+            titles = raw_titles
+
         return titles
 
-        
     def import_file(self):
         self.file_path = filedialog.askopenfilename(
             title = "Select PDF File",
@@ -97,15 +105,70 @@ class PDFEditor:
         
         num = 0
 
+        # Target coordinate (1087, 727); Center of description box
         for page in doc:
             text = titles[num]
-            page.insert_text(
-                (1000, 730),
-                text,
-                fontname = "helv",
-                fontsize = 14,
-                color = (0,0,0)
-            )
+
+            if len(text) <= 9:
+
+                page.insert_text(
+                    (1087 - (3.5*len(text)), 727),
+                    text,
+                    fontname = "helv",
+                    fontsize = 14,
+                    color = (0,0,0)
+                )
+            elif len(text) <= 19:
+
+                page.insert_text(
+                    (1087 - (3*len(text)), 727),
+                    text,
+                    fontname = "helv",
+                    fontsize = 14,
+                    color = (0,0,0)
+                )
+            elif len(text) <= 29:
+
+                page.insert_text(
+                    (1087 - (3.25*len(text)), 727),
+                    text,
+                    fontname = "helv",
+                    fontsize = 14,
+                    color = (0,0,0)
+                )
+            elif len(titles[num]) <= 39:
+        
+                 page.insert_text(
+                    (1087 - (2.91*len(text)), 727),
+                    text,
+                    fontname = "helv",
+                    fontsize = 12,
+                    color = (0,0,0)
+                )
+            else: 
+                long_title = text.split()
+                insert_index = len(long_title) // 2
+
+                bottom_text = long_title[insert_index:]
+                bottom_text = ' '.join(bottom_text)
+                top_text = long_title[:insert_index]
+                top_text = ' '.join(top_text)
+                offset = (len(bottom_text) - len(top_text)) // 2
+
+                long_title.insert(insert_index, '\n')
+
+                for i in range(offset):
+                    long_title.insert(0, ' ')
+
+                text = ' '.join(long_title)
+
+                page.insert_text(
+                    (1077 - (2.5*len(bottom_text)), 720),
+                    text,
+                    fontname = "helv",
+                    fontsize = 11,
+                    color = (0,0,0)
+                )
             num += 1
 
         og_filename = os.path.basename(self.file_path)
