@@ -94,27 +94,15 @@ class PDFEditor:
                     common_words.append(words[0])
                 else:
                     break
-
-            # DEBUG: Print common prefix found
-            print(f"\nCOMMON WORDS FOUND: {common_words}")
-            print(f"Number of common words: {len(common_words)}")
             
             if len(common_words) >= 3:
                 common_prefix_len = len(' '.join(common_words)) + 1
                 titles = [t[common_prefix_len:].strip() for t in raw_titles]
 
-                print(f"\nAFTER REMOVING PREFIX:")
-                for i, title in enumerate(titles):
-                    print(f"  {i}: '{title}'")
             else:
                 titles = raw_titles
         else:
             titles = raw_titles
-        
-        print(f"\nFINAL TITLES RETURNED:")
-        for i, title in enumerate(titles):
-            print(f"  {i}: '{title}'")
-            print(f"     Contains 'Office': {'Office' in title}, Contains 'ff': {'ff' in title}")
 
         return titles
 
@@ -225,7 +213,7 @@ class PDFEditor:
                 num += 1
 
             og_filename = os.path.basename(self.file_path[i])
-            new_filename = og_filename.replace('.pdf','_updated.pdf')
+            new_filename = og_filename
 
             save_path = os.path.join(self.output_path, new_filename )
 
