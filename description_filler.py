@@ -80,17 +80,41 @@ class PDFEditor:
                 if len(row) >=2:
                     title = row[1].strip()
                     if title:
+                        title = title.replace('Ư', 'ff')
                         raw_titles.append(title)
         doc.close()
 
         if len(raw_titles) > 1:
-            common_prefix = os.path.commonprefix(raw_titles)
-            if len(common_prefix.split()) >= 3:
-                titles = [t[len(common_prefix):].strip() for t in raw_titles]
+
+            split_titles = [t.split() for t in raw_titles]
+            common_words = []
+
+            for words in zip(*split_titles):
+                if len(set(words)) == 1:
+                    common_words.append(words[0])
+                else:
+                    break
+
+            # DEBUG: Print common prefix found
+            print(f"\nCOMMON WORDS FOUND: {common_words}")
+            print(f"Number of common words: {len(common_words)}")
+            
+            if len(common_words) >= 3:
+                common_prefix_len = len(' '.join(common_words)) + 1
+                titles = [t[common_prefix_len:].strip() for t in raw_titles]
+
+                print(f"\nAFTER REMOVING PREFIX:")
+                for i, title in enumerate(titles):
+                    print(f"  {i}: '{title}'")
             else:
                 titles = raw_titles
         else:
             titles = raw_titles
+        
+        print(f"\nFINAL TITLES RETURNED:")
+        for i, title in enumerate(titles):
+            print(f"  {i}: '{title}'")
+            print(f"     Contains 'Office': {'Office' in title}, Contains 'ff': {'ff' in title}")
 
         return titles
 
@@ -143,7 +167,7 @@ class PDFEditor:
                     page.insert_text(
                         (1087 - (3.5*len(text)), 727),
                         text,
-                        fontname = "helv",
+                        fontname = "helvetica",
                         fontsize = 14,
                         color = (0,0,0)
                     )
@@ -152,7 +176,7 @@ class PDFEditor:
                     page.insert_text(
                         (1087 - (3*len(text)), 727),
                         text,
-                        fontname = "helv",
+                        fontname = "helvetica",
                         fontsize = 14,
                         color = (0,0,0)
                     )
@@ -161,16 +185,16 @@ class PDFEditor:
                     page.insert_text(
                         (1087 - (3.25*len(text)), 727),
                         text,
-                        fontname = "helv",
+                        fontname = "helvetica",
                         fontsize = 14,
                         color = (0,0,0)
                     )
                 elif len(text) <= 39:
             
                     page.insert_text(
-                        (1087 - (2.9*len(text)), 727),
+                        (1087 - (2.8*len(text)), 727),
                         text,
-                        fontname = "helv",
+                        fontname = "helvetica",
                         fontsize = 12,
                         color = (0,0,0)
                     )
@@ -194,7 +218,7 @@ class PDFEditor:
                     page.insert_text(
                         (1077 - (2.5*len(bottom_text)), 720),
                         text,
-                        fontname = "helv",
+                        fontname = "helvetica",
                         fontsize = 11,
                         color = (0,0,0)
                     )
