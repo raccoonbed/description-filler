@@ -167,7 +167,7 @@ class PDFEditor:
                     page.insert_text(
                         (1087 - (3.5*len(text)), 727),
                         text,
-                        fontname = "helvetica",
+                        fontname = "helv",
                         fontsize = 14,
                         color = (0,0,0)
                     )
@@ -176,7 +176,7 @@ class PDFEditor:
                     page.insert_text(
                         (1087 - (3*len(text)), 727),
                         text,
-                        fontname = "helvetica",
+                        fontname = "helv",
                         fontsize = 14,
                         color = (0,0,0)
                     )
@@ -185,7 +185,7 @@ class PDFEditor:
                     page.insert_text(
                         (1087 - (3.25*len(text)), 727),
                         text,
-                        fontname = "helvetica",
+                        fontname = "helv",
                         fontsize = 14,
                         color = (0,0,0)
                     )
@@ -194,7 +194,7 @@ class PDFEditor:
                     page.insert_text(
                         (1087 - (2.8*len(text)), 727),
                         text,
-                        fontname = "helvetica",
+                        fontname = "helv",
                         fontsize = 12,
                         color = (0,0,0)
                     )
@@ -218,7 +218,7 @@ class PDFEditor:
                     page.insert_text(
                         (1077 - (2.5*len(bottom_text)), 720),
                         text,
-                        fontname = "helvetica",
+                        fontname = "helv",
                         fontsize = 11,
                         color = (0,0,0)
                     )
